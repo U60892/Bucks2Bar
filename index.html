@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bucks2Bar - Income & Expense Tracker</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+        .container {
+            max-width: 900px;
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        .container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .container::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+        }
+        .container::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: none;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .card-body {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px 15px 0 0 !important;
+            border: none;
+            padding: 12px 20px !important;
+        }
+        .card-header h5 {
+            font-size: 1.1rem;
+            margin: 0;
+        }
+        .nav-tabs {
+            border-bottom: 2px solid #e0e0e0;
+            margin-bottom: 15px !important;
+        }
+        .nav-tabs .nav-link {
+            color: #666;
+            border: none;
+            border-bottom: 3px solid transparent;
+            font-weight: 500;
+            padding: 8px 15px;
+            font-size: 0.95rem;
+        }
+        .nav-tabs .nav-link.active {
+            color: #667eea;
+            border-bottom: 3px solid #667eea !important;
+            background: none;
+        }
+        .tab-content {
+            flex: 1;
+            overflow-y: auto;
+        }
+        .tab-pane {
+            padding: 0;
+        }
+        .month-group {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        .month-group h6 {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+        .input-group {
+            margin-bottom: 8px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .input-group label {
+            font-weight: 500;
+            color: #555;
+            font-size: 0.85rem;
+            min-width: 70px;
+            margin-bottom: 0;
+        }
+        .form-control {
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            padding: 6px 10px;
+            font-size: 0.9rem;
+            flex: 1;
+        }
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        #chartContainer {
+            position: relative;
+            height: 350px;
+            margin-top: 10px;
+        }
+        #monthsContainer {
+            gap: 8px;
+        }
+        #monthsContainer > div {
+            margin-bottom: 0;
+        }
+        .title {
+            color: white;
+            text-align: center;
+            margin-bottom: 15px;
+            padding-top: 5px;
+        }
+        .title h1 {
+            font-weight: 700;
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+        .title p {
+            margin: 3px 0;
+            font-size: 0.95rem;
+        }
+        .text-muted {
+            font-size: 0.85rem;
+            margin: 8px 0 0 0 !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div style="position: absolute; top: 10px; right: 15px; z-index: 10;">
+            <button id="logoutBtn" class="btn" style="border-radius: 8px; padding: 6px 12px; font-size: 0.9rem; background: #dc3545; color: white; border: none;">
+                🚪 Logout
+            </button>
+        </div>
+        <div class="title">
+            <h1>💰 Bucks2Bar</h1>
+            <p class="lead">Track Your Income & Expenses</p>
+            <p id="userGreeting" style="color: rgba(255, 255, 255, 0.9); font-size: 0.85rem; margin: 3px 0 0 0;"></p>
+        </div>
+
+        <div class="card">
+            <div class="card-header py-3">
+                <h5 class="text-white mb-0">Financial Data Manager</h5>
+            </div>
+            <div class="card-body">
+                <!-- Tabs Navigation -->
+                <ul class="nav nav-tabs mb-4" id="tabsNav" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="data-tab" data-bs-toggle="tab" data-bs-target="#dataTab" type="button" role="tab">📊 Data</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="chart-tab" data-bs-toggle="tab" data-bs-target="#chartTab" type="button" role="tab">📈 Chart</button>
+                    </li>
+                </ul>
+
+                <!-- Tab Content -->
+                <div class="tab-content" id="tabContent">
+                    <!-- Data Tab -->
+                    <div class="tab-pane fade show active" id="dataTab" role="tabpanel">
+                        <div id="monthsContainer" class="row"></div>
+                        <div class="mt-4">
+                            <p class="text-muted text-center">
+                                ✨ Charts update automatically as you type
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Chart Tab -->
+                    <div class="tab-pane fade" id="chartTab" role="tabpanel">
+                        <div id="chartContainer">
+                            <!-- download button -->
+                            <button id="downloadBtn" class="btn mb-3" style="background: #dc3545; color: white; border: none;">Download Chart</button>
+                            <canvas id="myChart"></canvas>
+                        </div>
+                        <div class="mt-3 text-center">
+                            <small class="text-muted">Switch to the Data tab to modify values</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <!-- Authentication Check -->
+    <script>
+        // Check authentication on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                // User is not logged in, redirect to login page
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Display user greeting
+            const username = localStorage.getItem('username') || 'User';
+            document.getElementById('userGreeting').textContent = `Welcome, ${username}! 👋`;
+
+            // Setup logout button
+            document.getElementById('logoutBtn').addEventListener('click', () => {
+                // Clear authentication data
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('username');
+                // Redirect to login page
+                window.location.href = 'login.html';
+            });
+        });
+    </script>
+    <!-- Application Script -->
+    <script src="script.js"></script>
+</body>
+</html>
