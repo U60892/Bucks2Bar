@@ -1,0 +1,5 @@
+---
+name: create-instruction
+agent: instruction-generator
+---
+Take the infformation provided below and create a highly specific agent instructions file in the /docs directory. The generated instructions should be clear, concise, and tailored to the needs of the agents that will be using them. The instructions should cover key principles such as clarity, consistency, security, and performance, as well as specific coding standards and guidelines for different programming languages. Additionally, the instructions should include a review checklist to ensure that all generated code adheres to the defined standards. Update AGENTS.md file to include a link to the newly creared instructions file in the /docs directory. Name the instructions file based on the content of the instructions or provide the user given name.
